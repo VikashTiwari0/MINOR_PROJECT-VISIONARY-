@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Visionary — Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --ink:#1a1612;--cream:#f5f0e8;--gold:#c9a84c;--muted:#8a7f72;
+      --line:rgba(26,22,18,0.1);--card:#fffefb;--red:#c0392b;
+    }
+    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh}
+
+    /* NAV */
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:rgba(245,240,232,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+    .logo{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;letter-spacing:.1em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--gold)}
+    .nav-right{display:flex;align-items:center;gap:1rem}
+    .search-wrap{position:relative}
+    .search-wrap input{padding:.45rem 1rem .45rem 2.2rem;border:1px solid var(--line);background:var(--cream);font-size:.82rem;font-family:'DM Sans',sans-serif;color:var(--ink);width:200px;outline:none}
+    .search-wrap input:focus{border-color:var(--gold)}
+    .search-icon{position:absolute;left:.65rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.9rem}
+    .search-results{position:absolute;top:110%;left:0;right:0;background:var(--card);border:1px solid var(--line);z-index:200;display:none;max-height:300px;overflow-y:auto}
+    .search-results.open{display:block}
+    .search-item{display:flex;align-items:center;gap:.6rem;padding:.6rem .8rem;cursor:pointer;font-size:.85rem;text-decoration:none;color:var(--ink)}
+    .search-item:hover{background:var(--cream)}
+    .search-item img{width:32px;height:32px;border-radius:50%;object-fit:cover}
+    .nav-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;cursor:pointer;border:2px solid var(--line)}
+    .nav-btn{padding:.45rem 1.2rem;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;cursor:pointer;font-family:'DM Sans',sans-serif;border:none}
+    .btn-ghost-sm{background:transparent;border:1px solid var(--muted);color:var(--muted);transition:all .2s}
+    .btn-ghost-sm:hover{border-color:var(--ink);color:var(--ink)}
+
+    /* LAYOUT */
+    .layout{display:grid;grid-template-columns:1fr min(620px,100%) 280px;gap:0;padding-top:65px;min-height:100vh}
+    .feed-col{grid-column:2;padding:2rem 1rem}
+    .sidebar{grid-column:3;padding:2rem 1.5rem;border-left:1px solid var(--line);position:sticky;top:65px;height:calc(100vh - 65px);overflow-y:auto}
+
+    /* CREATE POST PANEL */
+    .create-card{background:var(--card);border:1px solid var(--line);padding:1.2rem;margin-bottom:1.5rem}
+    .create-card h3{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.8rem}
+    .create-top{display:flex;gap:.8rem;align-items:center}
+    .avatar-sm{width:38px;height:38px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
+    .create-input{flex:1;border:none;background:transparent;font-size:.9rem;font-family:'DM Sans',sans-serif;color:var(--ink);outline:none;cursor:pointer;padding:.4rem .6rem;border-bottom:1px solid var(--line)}
+    .create-input::placeholder{color:var(--muted)}
+    .create-expand{display:none;margin-top:.8rem;flex-direction:column;gap:.7rem}
+    .create-expand.open{display:flex}
+    .file-label{display:flex;align-items:center;gap:.5rem;cursor:pointer;font-size:.82rem;color:var(--muted);border:1px dashed var(--line);padding:.5rem .8rem;transition:all .2s}
+    .file-label:hover{border-color:var(--gold);color:var(--gold)}
+    .file-label input{display:none}
+    .img-preview{max-height:200px;object-fit:cover;width:100%;display:none}
+    .img-preview.show{display:block}
+    .caption-input{border:1px solid var(--line);padding:.5rem .7rem;font-size:.88rem;font-family:'DM Sans',sans-serif;background:transparent;color:var(--ink);outline:none;resize:none;width:100%}
+    .caption-input:focus{border-color:var(--gold)}
+    .post-btn{align-self:flex-end;padding:.55rem 1.6rem;background:var(--ink);color:var(--cream);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s}
+    .post-btn:hover{background:var(--gold);color:var(--ink)}
+
+    /* FEED */
+    .post-card{background:var(--card);border:1px solid var(--line);margin-bottom:1.2rem;animation:fadeUp .4s ease}
+    .post-header{display:flex;align-items:center;gap:.7rem;padding:.9rem 1rem;border-bottom:1px solid var(--line)}
+    .post-header a{text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:.7rem;flex:1}
+    .post-author-name{font-weight:500;font-size:.9rem}
+    .post-time{font-size:.75rem;color:var(--muted);margin-left:auto}
+    .post-img{width:100%;display:block;max-height:520px;object-fit:cover;cursor:pointer}
+    .post-actions{display:flex;align-items:center;gap:.5rem;padding:.7rem 1rem;border-top:1px solid var(--line)}
+    .action-btn{background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:.35rem;font-size:.82rem;color:var(--muted);font-family:'DM Sans',sans-serif;padding:.3rem .5rem;transition:color .2s}
+    .action-btn:hover{color:var(--ink)}
+    .action-btn.liked{color:var(--red)}
+    .action-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
+    .action-btn.liked svg{fill:var(--red);stroke:var(--red)}
+    .post-caption{padding:.4rem 1rem .5rem;font-size:.88rem;line-height:1.6}
+    .post-caption strong{font-weight:500;margin-right:.35rem}
+
+    /* COMMENTS */
+    .comments-section{border-top:1px solid var(--line);padding:.5rem 1rem .8rem}
+    .comment-list{max-height:160px;overflow-y:auto;margin-bottom:.5rem}
+    .comment-item{display:flex;gap:.5rem;margin-bottom:.5rem;font-size:.83rem}
+    .comment-item a{font-weight:500;text-decoration:none;color:var(--ink);white-space:nowrap}
+    .comment-item span{color:var(--muted);font-size:.72rem;margin-left:auto;white-space:nowrap}
+    .comment-form{display:flex;gap:.5rem;align-items:center}
+    .comment-input{flex:1;border:none;border-bottom:1px solid var(--line);background:transparent;font-size:.85rem;font-family:'DM Sans',sans-serif;padding:.3rem .2rem;outline:none;color:var(--ink)}
+    .comment-input:focus{border-color:var(--gold)}
+    .comment-submit{background:none;border:none;color:var(--gold);cursor:pointer;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;font-family:'DM Sans',sans-serif;font-weight:500}
+
+    /* SIDEBAR */
+    .sidebar-section{margin-bottom:1.8rem}
+    .sidebar-title{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:.9rem;padding-bottom:.4rem;border-bottom:1px solid var(--line)}
+    .profile-mini{display:flex;align-items:center;gap:.8rem;margin-bottom:.6rem}
+    .profile-mini img{width:48px;height:48px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
+    .profile-mini-info{flex:1}
+    .profile-mini-name{font-weight:500;font-size:.9rem}
+    .profile-mini-bio{font-size:.78rem;color:var(--muted)}
+    .profile-stats{display:flex;gap:1.2rem;margin-top:.4rem}
+    .stat{text-align:center}
+    .stat-num{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;display:block}
+    .stat-label{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+    .suggestion-item{display:flex;align-items:center;gap:.7rem;margin-bottom:.7rem}
+    .suggestion-item img{width:36px;height:36px;border-radius:50%;object-fit:cover}
+    .sugg-info{flex:1}
+    .sugg-name{font-size:.85rem;font-weight:500;text-decoration:none;color:var(--ink)}
+    .sugg-meta{font-size:.75rem;color:var(--muted)}
+    .follow-btn{padding:.3rem .8rem;font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;border:1px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+    .follow-btn:hover,.follow-btn.following{background:var(--ink);color:var(--cream)}
+
+    /* LOADER */
+    .loader{text-align:center;padding:1.5rem;color:var(--muted);font-size:.82rem;letter-spacing:.08em}
+    .spinner{display:inline-block;width:22px;height:22px;border:2px solid var(--line);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:.5rem}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:2rem;right:2rem;background:var(--ink);color:var(--cream);padding:.7rem 1.3rem;font-size:.83rem;z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none}
+    .toast.show{opacity:1;transform:translateY(0)}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    @media(max-width:900px){.layout{grid-template-columns:1fr};.sidebar{display:none}}
+    @media(max-width:600px){.feed-col{padding:1rem .5rem}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">vis<span>ons</span></a>
+  <div class="nav-right">
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="searchInput" placeholder="Search users…" autocomplete="off"/>
+      <div class="search-results" id="searchResults"></div>
+    </div>
+    <a href="./profile.html" id="navProfileLink">
+      <img src="https://ui-avatars.com/api/?name=U&background=c9a84c&color=fff" class="nav-avatar" id="navAvatar"/>
+    </a>
+    <button class="nav-btn btn-ghost-sm" id="logoutBtn">Logout</button>
+  </div>
+</nav>
+
+<div class="layout">
+  <div class="feed-col">
+
+    <!-- CREATE POST -->
+    <div class="create-card">
+      <h3>New Post</h3>
+      <div class="create-top">
+        <img src="https://ui-avatars.com/api/?name=U&background=c9a84c&color=fff" class="avatar-sm" id="createAvatar"/>
+        <input class="create-input" id="createTrigger" placeholder="Share something…" readonly/>
+      </div>
+      <div class="create-expand" id="createExpand">
+        <label class="file-label">
+          <span>📷 Choose Image</span>
+          <input type="file" id="postImage" accept="image/*"/>
+        </label>
+        <img class="img-preview" id="imgPreview"/>
+        <textarea class="caption-input" id="postCaption" rows="2" placeholder="Write a caption…"></textarea>
+        <button class="post-btn" id="submitPost">Post</button>
+      </div>
+    </div>
+
+    <!-- FEED -->
+    <div id="feedContainer"></div>
+    <div class="loader" id="feedLoader"><span class="spinner"></span> Loading…</div>
+
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-section" id="sidebarProfile">
+      <div class="sidebar-title">Your Profile</div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">Suggestions</div>
+      <div id="suggestions"></div>
+    </div>
+  </aside>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const BASE = '/api';
+let currentUser = null;
+let feedPage = 1;
+let feedLoading = false;
+let feedHasMore = true;
+
+function showToast(msg, dur = 2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), dur);
+}
+
+function timeAgo(dateStr) {
+  const sec = Math.floor((Date.now() - new Date(dateStr)) / 1000);
+  if (sec < 60) return 'just now';
+  if (sec < 3600) return Math.floor(sec/60) + 'm ago';
+  if (sec < 86400) return Math.floor(sec/3600) + 'h ago';
+  return Math.floor(sec/86400) + 'd ago';
+}
+
+function avatarUrl(user) {
+  return user?.avatar?.url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name||'U')}&background=c9a84c&color=fff`;
+}
+
+// ── AUTH CHECK ──────────────────────────────────────────────────
+
+async function tryRefreshToken() {
+  try {
+    const res = await fetch(`${BASE}/refresh-token`, {
+      method: 'POST',              // ✅ matches backend
+      credentials: 'include'       // 🔑 send cookies
+    });
+
+    return res.ok; // true = refreshed, false = expired
+  } catch (err) {
+    return false;
+  }
+}
+
+async function loadCurrentUser() {
+  try {
+    let r = await fetch(`${BASE}/users/me`, {
+      credentials: 'include'
+    });
+
+    // ✅ If access token expired
+    if (r.status === 401) {
+      const refreshed = await tryRefreshToken();
+
+      if (!refreshed) {
+        // window.location.href = '/sign-in';
+        return;
+      }
+
+      // 🔁 retry original request
+      r = await fetch(`${BASE}/users/me`, {
+        credentials: 'include'
+      });
+    }
+
+    if (!r.ok) {
+      window.location.href = './sign-in.html';
+      return;
+    }
+
+    currentUser = await r.json();
+
+    document.getElementById('navAvatar').src = avatarUrl(currentUser);
+    document.getElementById('createAvatar').src = avatarUrl(currentUser);
+
+    renderSidebarProfile();
+    loadSuggestions();
+
+  } catch (err) {
+    window.location.href = './sign-in.html';
+    return;
+  }
+}
+
+function renderSidebarProfile() {
+  document.getElementById('sidebarProfile').innerHTML = `
+    <div class="sidebar-title">Your Profile</div>
+    <div class="profile-mini">
+      <img src="${avatarUrl(currentUser)}" alt=""/>
+      <div class="profile-mini-info">
+        <div class="profile-mini-name">${currentUser.name}</div>
+        <div class="profile-mini-bio">${currentUser.bio || 'No bio yet'}</div>
+      </div>
+    </div>
+    <div class="profile-stats">
+      <div class="stat"><span class="stat-num">${currentUser.followers?.length||0}</span><span class="stat-label">Followers</span></div>
+      <div class="stat"><span class="stat-num">${currentUser.following?.length||0}</span><span class="stat-label">Following</span></div>
+    </div>
+    <div style="margin-top:.8rem"><a href="/profile" style="font-size:.8rem;color:var(--gold);text-decoration:none;letter-spacing:.06em;text-transform:uppercase;">View Profile →</a></div>
+  `;
+}
+
+// ── FEED ────────────────────────────────────────────────────────
+async function loadFeed() {
+  if (feedLoading || !feedHasMore) return;
+  feedLoading = true;
+  document.getElementById('feedLoader').style.display = 'block';
+
+  try {
+    const r = await fetch(`${BASE}/posts/feed?page=${feedPage}&limit=8`, { credentials: 'include' });
+    if (!r.ok) throw new Error();
+    const data = await r.json();
+    data.posts.forEach(renderPost);
+    feedHasMore = data.hasMore;
+    feedPage++;
+    if (!feedHasMore) document.getElementById('feedLoader').textContent = '— No more posts —';
+    else document.getElementById('feedLoader').style.display = 'none';
+  } catch {
+    document.getElementById('feedLoader').textContent = 'Failed to load feed.';
+  }
+  feedLoading = false;
+}
+
+function renderPost(post) {
+  const container = document.getElementById('feedContainer');
+  const el = document.createElement('div');
+  el.className = 'post-card';
+  el.dataset.postId = post._id;
+
+  const authorLink = post.author._id === currentUser?._id ? '/profile' : `/user-profile?id=${post.author._id}`;
+
+  el.innerHTML = `
+    <div class="post-header">
+      <a href="${authorLink}">
+        <img src="${avatarUrl(post.author)}" class="avatar-sm" alt=""/>
+        <span class="post-author-name">${post.author.name}</span>
+      </a>
+      <span class="post-time">${timeAgo(post.createdAt)}</span>
+    </div>
+    <img class="post-img" src="${post.image.url}" alt="post" loading="lazy"/>
+    <div class="post-actions">
+      <button class="action-btn like-btn ${post.liked ? 'liked' : ''}" data-id="${post._id}">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span class="like-count">${post.likeCount||0}</span>
+      </button>
+      <button class="action-btn comment-toggle-btn" data-id="${post._id}">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>${post.commentCount||0}</span>
+      </button>
+    </div>
+    ${post.caption ? `<div class="post-caption"><strong>${post.author.name}</strong>${post.caption}</div>` : ''}
+    <div class="comments-section" id="comments-${post._id}" style="display:none">
+      <div class="comment-list" id="comment-list-${post._id}">
+        ${(post.comments||[]).slice(-5).map(c => `
+          <div class="comment-item">
+            <img src="${avatarUrl(c.user)}" style="width:22px;height:22px;border-radius:50%;object-fit:cover"/>
+            <div><a href="/user-profile?id=${c.user._id}">${c.user.name}</a> ${c.text}</div>
+          </div>`).join('')}
+      </div>
+      <div class="comment-form">
+        <input class="comment-input" placeholder="Add a comment…" data-id="${post._id}"/>
+        <button class="comment-submit" data-id="${post._id}">Post</button>
+      </div>
+    </div>
+  `;
+  container.appendChild(el);
+  attachPostEvents(el, post);
+}
+
+function attachPostEvents(el, post) {
+  // Like
+  el.querySelector('.like-btn').addEventListener('click', async (e) => {
+    const btn = e.currentTarget;
+    const r = await fetch(`${BASE}/posts/${post._id}/like`, { method: 'POST', credentials: 'include' });
+    if (r.ok) {
+      const d = await r.json();
+      btn.classList.toggle('liked', d.liked);
+      btn.querySelector('.like-count').textContent = d.likeCount;
+    }
+  });
+
+  // Toggle comments
+  el.querySelector('.comment-toggle-btn').addEventListener('click', () => {
+    const sec = document.getElementById(`comments-${post._id}`);
+    sec.style.display = sec.style.display === 'none' ? 'block' : 'none';
+  });
+
+  // Submit comment
+  el.querySelector('.comment-submit').addEventListener('click', async () => {
+    const input = el.querySelector('.comment-input');
+    const text = input.value.trim();
+    if (!text) return;
+    const r = await fetch(`${BASE}/posts/${post._id}/comment`, {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+    if (r.ok) {
+      const d = await r.json();
+      const list = document.getElementById(`comment-list-${post._id}`);
+      const div = document.createElement('div');
+      div.className = 'comment-item';
+      div.innerHTML = `<img src="${avatarUrl(currentUser)}" style="width:22px;height:22px;border-radius:50%;object-fit:cover"/><div><a href="/profile">${currentUser.name}</a> ${text}</div>`;
+      list.appendChild(div);
+      list.scrollTop = list.scrollHeight;
+      input.value = '';
+      const countEl = el.querySelector('.comment-toggle-btn span');
+      if (countEl) countEl.textContent = d.commentCount;
+    }
+  });
+
+  // Enter key for comment
+  el.querySelector('.comment-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') el.querySelector('.comment-submit').click();
+  });
+}
+
+// ── CREATE POST ─────────────────────────────────────────────────
+document.getElementById('createTrigger').addEventListener('click', () => {
+  document.getElementById('createExpand').classList.add('open');
+});
+
+document.getElementById('postImage').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const prev = document.getElementById('imgPreview');
+    prev.src = ev.target.result;
+    prev.classList.add('show');
+  };
+  reader.readAsDataURL(file);
+});
+
+document.getElementById('submitPost').addEventListener('click', async () => {
+  const img = document.getElementById('postImage').files[0];
+  if (!img) { showToast('Please select an image'); return; }
+  const caption = document.getElementById('postCaption').value;
+  const fd = new FormData();
+  fd.append('image', img);
+  fd.append('caption', caption);
+  const btn = document.getElementById('submitPost');
+  btn.textContent = 'Posting…';
+  btn.disabled = true;
+  try {
+    const r = await fetch(`${BASE}/posts/create`, { method: 'POST', credentials: 'include', body: fd });
+    if (r.ok) {
+      const d = await r.json();
+      showToast('Post shared!');
+      // prepend to feed
+      const container = document.getElementById('feedContainer');
+      const postEl = document.createElement('div');
+      postEl.className = 'post-card';
+      postEl.dataset.postId = d.post._id;
+      const enriched = { ...d.post, liked: false, likeCount: 0, commentCount: 0 };
+      container.insertAdjacentHTML('afterbegin', '');
+      renderPost(enriched);
+      container.insertBefore(container.lastChild, container.firstChild);
+      // reset form
+      document.getElementById('createExpand').classList.remove('open');
+      document.getElementById('postImage').value = '';
+      document.getElementById('postCaption').value = '';
+      document.getElementById('imgPreview').classList.remove('show');
+    } else {
+      const e = await r.json();
+      showToast(e.message || 'Error posting');
+    }
+  } catch { showToast('Error posting'); }
+  btn.textContent = 'Post';
+  btn.disabled = false;
+});
+
+// ── SUGGESTIONS ─────────────────────────────────────────────────
+async function loadSuggestions() {
+  try {
+    const r = await fetch(`${BASE}/users/search?q=a`, { credentials: 'include' });
+    const users = await r.json();
+    const followingIds = new Set((currentUser.following||[]).map(f => f._id || f));
+    const box = document.getElementById('suggestions');
+    const filtered = users.filter(u => u._id !== currentUser._id).slice(0, 5);
+    if (!filtered.length) { box.innerHTML = '<span style="font-size:.82rem;color:var(--muted)">No suggestions yet</span>'; return; }
+    box.innerHTML = filtered.map(u => `
+      <div class="suggestion-item" id="sugg-${u._id}">
+        <img src="${avatarUrl(u)}" alt=""/>
+        <div class="sugg-info">
+          <a class="sugg-name" href="/user-profile?id=${u._id}">${u.name}</a>
+          <div class="sugg-meta">${u.bio || ''}</div>
+        </div>
+        <button class="follow-btn ${followingIds.has(u._id) ? 'following' : ''}" data-id="${u._id}">
+          ${followingIds.has(u._id) ? 'Following' : 'Follow'}
+        </button>
+      </div>
+    `).join('');
+
+    box.querySelectorAll('.follow-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const uid = btn.dataset.id;
+        const r = await fetch(`${BASE}/users/follow/${uid}`, { method: 'POST', credentials: 'include' });
+        if (r.ok) {
+          const d = await r.json();
+          btn.classList.toggle('following', d.following);
+          btn.textContent = d.following ? 'Following' : 'Follow';
+        }
+      });
+    });
+  } catch {}
+}
+
+// ── SEARCH ──────────────────────────────────────────────────────
+let searchTimer;
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  clearTimeout(searchTimer);
+  const q = e.target.value.trim();
+  if (!q) { document.getElementById('searchResults').classList.remove('open'); return; }
+  searchTimer = setTimeout(async () => {
+    const r = await fetch(`${BASE}/users/search?q=${encodeURIComponent(q)}`, { credentials: 'include' });
+    const users = await r.json();
+    const box = document.getElementById('searchResults');
+    if (!users.length) { box.classList.remove('open'); return; }
+    box.innerHTML = users.map(u => `
+      <a class="search-item" href="/user-profile?id=${u._id}">
+        <img src="${avatarUrl(u)}" alt=""/>
+        ${u.name}
+      </a>
+    `).join('');
+    box.classList.add('open');
+  }, 300);
+});
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.search-wrap')) document.getElementById('searchResults').classList.remove('open');
+});
+
+// ── LOGOUT ──────────────────────────────────────────────────────
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await fetch(`${BASE}/users/logout`, { method: 'POST', credentials: 'include' });
+  window.location.href = '/';
+});
+
+// ── INFINITE SCROLL ─────────────────────────────────────────────
+const observer = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting && feedHasMore && !feedLoading) loadFeed();
+}, { threshold: 0.1 });
+observer.observe(document.getElementById('feedLoader'));
+
+// ── INIT ────────────────────────────────────────────────────────
+loadCurrentUser().then(() => loadFeed());
+</script>
+</body>
+</html>

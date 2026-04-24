@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Visionary — About</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --ink: #1a1612; --cream: #f5f0e8;
+      --gold: #c9a84c; --muted: #8a7f72; --line: rgba(26,22,18,0.12);
+    }
+    html, body { height: 100%; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); overflow-x: hidden; }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.4rem 3rem;
+      background: rgba(245,240,232,0.85); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+    .logo { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 300; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); text-decoration: none; }
+    .logo span { color: var(--gold); }
+    .nav-links { display: flex; gap: 2.2rem; list-style: none; }
+    .nav-links a { font-size: 0.78rem; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.25s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--ink); }
+    .nav-cta { font-size: 0.78rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.55rem 1.4rem; border: 1px solid var(--ink); color: var(--ink); text-decoration: none; transition: all 0.25s; }
+    .nav-cta:hover { background: var(--ink); color: var(--cream); }
+
+    .page-header {
+      padding: 10rem 3rem 5rem;
+      max-width: 900px; margin: 0 auto;
+      opacity: 0; animation: fadeUp 0.9s 0.2s ease forwards;
+    }
+    .page-header .eyebrow { font-size: 0.72rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.5rem; }
+    .page-header h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 300; line-height: 1.15; }
+    .page-header h1 em { font-style: italic; color: var(--gold); }
+
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem;
+      max-width: 900px; margin: 0 auto;
+      padding: 0 3rem 6rem;
+    }
+    .about-text { opacity: 0; animation: fadeUp 0.9s 0.5s ease forwards; }
+    .about-text p { font-size: 1rem; line-height: 1.8; color: var(--muted); margin-bottom: 1.2rem; }
+    .about-text p strong { color: var(--ink); font-weight: 500; }
+
+    .about-quote {
+      opacity: 0; animation: fadeUp 0.9s 0.7s ease forwards;
+      border-left: 2px solid var(--gold); padding-left: 2rem;
+      align-self: start; position: sticky; top: 8rem;
+    }
+    .about-quote blockquote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem; font-style: italic;
+      color: var(--ink); line-height: 1.6;
+    }
+    .about-quote cite {
+      display: block; margin-top: 1rem;
+      font-style: normal; font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--gold);
+    }
+
+    .values {
+      max-width: 900px; margin: 0 auto;
+      padding: 0 3rem 6rem;
+      opacity: 0; animation: fadeUp 0.9s 0.9s ease forwards;
+    }
+    .values h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 2.5rem;
+    }
+    .values-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 2rem; }
+    .value-item { padding: 1.8rem; border: 1px solid var(--line); }
+    .value-item h3 { font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.8rem; font-weight: 500; }
+    .value-item p { font-size: 0.88rem; color: var(--muted); line-height: 1.7; }
+
+    footer { border-top: 1px solid var(--line); padding: 2rem 3rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--muted); letter-spacing: 0.06em; }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--ink); }
+
+    @keyframes fadeUp { from { opacity:0; transform:translateY(22px); } to { opacity:1; transform:translateY(0); } }
+
+    @media (max-width: 700px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links, .nav-cta { display: none; }
+      .page-header { padding: 7rem 1.5rem 3rem; }
+      .about-grid { grid-template-columns: 1fr; padding: 0 1.5rem 4rem; }
+      .about-quote { position: static; }
+      .values { padding: 0 1.5rem 4rem; }
+      footer { padding: 1.5rem; flex-direction: column; gap: 0.5rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="logo">vis<span>ons</span></a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about" class="active">About</a></li>
+      <li><a href="/contact">Contact</a></li>
+    </ul>
+    <a href="/sign-up" class="nav-cta">Sign Up</a>
+  </nav>
+
+  <header class="page-header">
+    <p class="eyebrow">Our Story</p>
+    <h1>Built on <em>intention,</em><br/>driven by craft</h1>
+  </header>
+
+  <div class="about-grid">
+    <div class="about-text">
+      <p>We started vision with one simple belief: that <strong>great work comes from great intention.</strong> Not from trends, not from noise — but from the quiet discipline of doing things right.</p>
+      <p>Every product we build, every word we write, every pixel we place is guided by a commitment to clarity, beauty, and purpose. We believe in slowing down to think before moving fast.</p>
+      <p>Our team is small by choice. We work closely, think deeply, and care deeply about the people who use what we create.</p>
+    </div>
+
+    <div class="about-quote">
+      <blockquote>
+        "In the middle of difficulty lies opportunity."
+        <cite>— Albert Einstein</cite>
+      </blockquote>
+    </div>
+  </div>
+
+  <div class="values">
+    <h2>What We Stand For</h2>
+    <div class="values-list">
+      <div class="value-item">
+        <h3>Honesty</h3>
+        <p>We say what we mean and mean what we say. Always.</p>
+      </div>
+      <div class="value-item">
+        <h3>Simplicity</h3>
+        <p>Complexity is easy. Simplicity requires mastery.</p>
+      </div>
+      <div class="value-item">
+        <h3>Longevity</h3>
+        <p>We build things to last, not just to impress in the moment.</p>
+      </div>
+      <div class="value-item">
+        <h3>People</h3>
+        <p>Behind every screen is a human being. We never forget that.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span>© 2026 Visionary. All rights reserved.</span>
+    <span><a href="/">Home</a> · <a href="/contact">Contact</a> · <a href="/sign-up">Sign Up</a></span>
+  </footer>
+
+</body>
+</html>

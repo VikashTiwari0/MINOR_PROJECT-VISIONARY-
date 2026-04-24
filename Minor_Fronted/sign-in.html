@@ -1,0 +1,631 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Luminary — Sign In</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --ink: #1a1612;
+      --cream: #f5f0e8;
+      --gold: #c9a84c;
+      --muted: #8a7f72;
+      --line: rgba(26, 22, 18, 0.12);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--ink);
+      color: var(--cream);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.4rem 3rem;
+      background: rgba(26, 22, 18, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--cream);
+      text-decoration: none;
+    }
+
+    .logo span {
+      color: var(--gold);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.78rem;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(245, 240, 232, 0.5);
+      text-decoration: none;
+      transition: color 0.25s;
+    }
+
+    .nav-links a:hover {
+      color: var(--cream);
+    }
+
+    .nav-back {
+      font-size: 0.78rem;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(245, 240, 232, 0.5);
+      text-decoration: none;
+      transition: color 0.25s;
+    }
+
+    .nav-back:hover {
+      color: var(--cream);
+    }
+
+    /* LAYOUT */
+    .signin-wrap {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+    }
+
+    /* LEFT PANEL */
+    .signin-hero {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 10rem 4rem 4rem;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.2s ease forwards;
+    }
+
+    .signin-hero::before {
+      content: '';
+      position: absolute;
+      top: 15%;
+      left: -20%;
+      width: 80%;
+      height: 70%;
+      background: radial-gradient(ellipse, rgba(201, 168, 76, 0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .signin-hero .eyebrow {
+      font-size: 0.72rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+    }
+
+    .signin-hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.5rem, 4vw, 3.8rem);
+      font-weight: 300;
+      line-height: 1.15;
+      color: var(--cream);
+      margin-bottom: 1.5rem;
+    }
+
+    .signin-hero h1 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .signin-hero .desc {
+      font-size: 0.9rem;
+      color: rgba(245, 240, 232, 0.55);
+      line-height: 1.8;
+      max-width: 380px;
+      margin-bottom: 3rem;
+    }
+
+    /* STATS */
+    .stat-list {
+      display: flex;
+      gap: 2.5rem;
+      margin-bottom: 3rem;
+    }
+
+    /* .stat-item {} */
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 300;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(245, 240, 232, 0.35);
+      margin-top: 0.3rem;
+    }
+
+    .signin-quote {
+      padding-top: 2.5rem;
+      border-top: 1px solid rgba(245, 240, 232, 0.1);
+    }
+
+    .signin-quote blockquote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      font-style: italic;
+      color: rgba(245, 240, 232, 0.55);
+      line-height: 1.7;
+    }
+
+    .signin-quote cite {
+      display: block;
+      margin-top: 0.7rem;
+      font-style: normal;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    /* RIGHT PANEL */
+    .signin-form-wrap {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 10rem 4rem 4rem;
+      background: rgba(255, 255, 255, 0.025);
+      border-left: 1px solid rgba(255, 255, 255, 0.06);
+      opacity: 0;
+      animation: fadeUp 0.9s 0.45s ease forwards;
+    }
+
+    .form-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.7rem;
+      font-weight: 300;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-subtitle {
+      font-size: 0.85rem;
+      color: rgba(245, 240, 232, 0.45);
+      margin-bottom: 2.5rem;
+    }
+
+    .form-subtitle a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    .form-subtitle a:hover {
+      text-decoration: underline;
+    }
+
+    .form-group {
+      margin-bottom: 1.4rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(245, 240, 232, 0.45);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      color: var(--cream);
+      outline: none;
+      transition: border-color 0.25s;
+    }
+
+    .form-group input::placeholder {
+      color: rgba(245, 240, 232, 0.2);
+    }
+
+    .form-group input:focus {
+      border-color: var(--gold);
+    }
+
+    .form-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.8rem;
+    }
+
+    .remember {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .remember input[type="checkbox"] {
+      accent-color: var(--gold);
+      width: 14px;
+      height: 14px;
+    }
+
+    .remember label {
+      font-size: 0.8rem;
+      color: rgba(245, 240, 232, 0.45);
+      cursor: pointer;
+    }
+
+    .forgot-link {
+      font-size: 0.8rem;
+      color: var(--gold);
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .forgot-link:hover {
+      opacity: 0.7;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 1rem;
+      background: var(--gold);
+      color: var(--ink);
+      border: none;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .btn-submit:hover {
+      background: var(--cream);
+    }
+
+    .divider-or {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .divider-or::before,
+    .divider-or::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .divider-or span {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(245, 240, 232, 0.25);
+    }
+
+    .social-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+      margin-bottom: 0;
+    }
+
+    .btn-social {
+      padding: 0.75rem 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: transparent;
+      color: rgba(245, 240, 232, 0.6);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.25s;
+      text-decoration: none;
+    }
+
+    .btn-social:hover {
+      border-color: var(--gold);
+      color: var(--cream);
+    }
+
+    .btn-social svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 1.5rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.72rem;
+      color: rgba(245, 240, 232, 0.3);
+      letter-spacing: 0.06em;
+    }
+
+    footer a {
+      color: rgba(245, 240, 232, 0.3);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: var(--cream);
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(22px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        padding: 1rem 1.5rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .signin-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .signin-hero {
+        padding: 7rem 1.5rem 2rem;
+      }
+
+      .signin-form-wrap {
+        padding: 2rem 1.5rem 4rem;
+        border-left: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .stat-list {
+        gap: 1.5rem;
+      }
+
+      footer {
+        padding: 1.5rem;
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <a href="./index.html" class="logo">vis<span>ons</span></a>
+    <ul class="nav-links">
+      <li><a href="./index.html">Home</a></li>
+      <li><a href="./about.html">About</a></li>
+      <li><a href="./contact.html">Contact</a></li>
+    </ul>
+    <a href="./index.html" class="nav-back">← Back</a>
+  </nav>
+
+  <div class="signin-wrap">
+
+    <!-- LEFT PANEL -->
+    <div class="signin-hero">
+      <p class="eyebrow">Welcome Back</p>
+      <h1>Good to see<br />you <em>again</em></h1>
+      <p class="desc">Sign in to continue your journey. Everything you've built is right where you left it.</p>
+
+      <div class="stat-list">
+        <div class="stat-item">
+          <div class="stat-num">12k+</div>
+          <div class="stat-label">Members</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">98%</div>
+          <div class="stat-label">Satisfaction</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">24/7</div>
+          <div class="stat-label">Support</div>
+        </div>
+      </div>
+
+      <div class="signin-quote">
+        <blockquote>
+          "It does not matter how slowly you go, as long as you do not stop."
+          <cite>— Confucius</cite>
+        </blockquote>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="signin-form-wrap">
+      <p class="form-title">Sign in</p>
+      <p class="form-subtitle">Don't have an account? <a href="./sign-up.html">Create one</a></p>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="jane@example.com" />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Your password" />
+      </div>
+
+      <div class="form-options">
+        <div class="remember">
+          <input type="checkbox" id="remember" />
+          <label for="remember">Remember me</label>
+        </div>
+        <a href="./otp.html" class="forgot-link">Forgot password?</a>
+      </div>
+
+      <button class="btn-submit" onclick="Submit(event)">Sign In</button>
+
+        <div class="divider-or"><span>or continue with</span></div>
+
+        <div class="social-row">
+          <a href="#" class="btn-social">
+            <!-- Google icon -->
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                fill="#4285F4" />
+              <path
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                fill="#34A853" />
+              <path
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
+                fill="#FBBC05" />
+              <path
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                fill="#EA4335" />
+            </svg>
+            Google
+          </a>
+          <a href="#" class="btn-social">
+            <!-- GitHub icon -->
+            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+            </svg>
+            GitHub
+          </a>
+        </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <span>© 2026 visionary. All rights reserved.</span>
+    <span><a href="./index.html">Home</a> · <a href="./about.html">About</a> · <a href="./contact.html">Contact</a></span>
+  </footer>
+
+</body>
+
+
+<script>
+  const password = document.getElementById("password");
+  const email = document.getElementById("email");
+
+  async function Submit(e) {
+    e.preventDefault();
+
+    const btn = document.querySelector(".btn-submit");
+
+    btn.textContent = "Signing In…";
+    btn.disabled = true;
+
+    try {
+      const res = await fetch("/api/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email: email.value,
+          password: password.value
+        })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        btn.textContent = "Welcome Back ✓";
+        btn.style.background = "var(--cream)";
+        btn.style.color = "var(--ink)";
+
+        // redirect after short delay
+        setTimeout(() => {
+          window.location.href = "./dashboard.html";
+        }, 1000);
+
+      } else {
+        btn.textContent = data.message || "Login Failed";
+        btn.style.background = "#ff4d4d";
+
+        setTimeout(() => {
+          btn.textContent = "Sign In";
+          btn.style.background = "var(--gold)";
+          btn.disabled = false;
+        }, 1500);
+      }
+
+    } catch (err) {
+      console.error(err);
+
+      btn.textContent = "Server Error";
+      btn.style.background = "#ff4d4d";
+
+      setTimeout(() => {
+        btn.textContent = "Sign In";
+        btn.style.background = "var(--gold)";
+        btn.disabled = false;
+      }, 1500);
+    }
+  }
+</script>
+
+
+</html>

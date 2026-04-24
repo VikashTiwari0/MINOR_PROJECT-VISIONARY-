@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create New Password</title>
+  <style>
+    /* Exact same CSS as OTP page for consistency */
+    :root {
+      --ink: #1a1612;
+      --cream: #f5f0e8;
+      --gold: #c9a84c;
+      --muted: #8a7f72;
+      --line: rgba(26, 22, 18, 0.12);
+      --error: #d93838; 
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--cream);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .card {
+      background-color: #fff;
+      padding: 2.5rem;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 { margin-bottom: 0.5rem; }
+    p.subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+    
+    .form-group { margin-bottom: 1.25rem; }
+    label { display: block; font-size: 0.875rem; margin-bottom: 0.5rem; font-weight: 500; }
+    
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+    input:focus { outline: none; border-color: var(--gold); }
+    
+    input.input-error { border-color: var(--error); background-color: rgba(217, 56, 56, 0.03); }
+    .error-msg { color: var(--error); font-size: 0.8rem; margin-top: 0.4rem; display: none; }
+    .error-msg.visible { display: block; }
+    
+    .success-msg { color: var(--gold); font-weight: bold; text-align: center; display: none; margin-top: 1rem;}
+    .success-msg.visible { display: block; }
+
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: var(--ink);
+      color: var(--cream);
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    button:hover { background-color: var(--gold); color: var(--ink); }
+    button:disabled { background-color: var(--muted); cursor: not-allowed; }
+    
+    #reset-form { display: block; }
+    #reset-form.hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>New Password</h2>
+    <p class="subtitle" id="subtitle-text">Create a secure new password.</p>
+    
+    <div id="reset-form">
+      <div class="form-group">
+        <label for="new-pass">Password</label>
+        <input type="password" id="new-pass" placeholder="••••••••">
+        <div id="new-pass-error" class="error-msg">Password must be at least 6 characters.</div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirm-pass">Confirm Password</label>
+        <input type="password" id="confirm-pass" placeholder="••••••••">
+        <div id="confirm-pass-error" class="error-msg">Passwords do not match.</div>
+      </div>
+      
+      <button id="btn-submit">Reset Password</button>
+    </div>
+
+    <div id="success-message" class="success-msg">
+      Password updated successfully!<br>
+      <a href="login.html" style="color: var(--ink); font-size: 0.9rem; margin-top: 10px; display: inline-block;">Go to Login</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('btn-submit').addEventListener('click', async (e) => {
+      const newPass = document.getElementById('new-pass');
+      const confirmPass = document.getElementById('confirm-pass');
+      const newPassError = document.getElementById('new-pass-error');
+      const confirmPassError = document.getElementById('confirm-pass-error');
+      const btn = e.target;
+
+      // Clear previous errors
+      newPass.classList.remove('input-error');
+      confirmPass.classList.remove('input-error');
+      newPassError.classList.remove('visible');
+      confirmPassError.classList.remove('visible');
+
+      let isValid = true;
+
+      // Validate length
+      if (newPass.value.length < 6) {
+        newPass.classList.add('input-error');
+        newPassError.classList.add('visible');
+        isValid = false;
+      }
+
+      // Validate match
+      if (newPass.value !== confirmPass.value || confirmPass.value === '') {
+        confirmPass.classList.add('input-error');
+        confirmPassError.classList.add('visible');
+        isValid = false;
+      }
+
+      if (!isValid) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Updating...';
+
+      try {
+        // --- YOUR FETCH API CALL HERE ---
+        // const response = await fetch('/api/reset-password', {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json' },
+        //   body: JSON.stringify({ password: newPass.value })
+        // });
+        // if (!response.ok) throw new Error('Failed to update');
+
+        // Mock delay for demonstration
+        await new Promise(r => setTimeout(r, 1000));
+        
+        // Hide form and show success message
+        document.getElementById('reset-form').classList.add('hidden');
+        document.getElementById('subtitle-text').style.display = 'none';
+        document.getElementById('success-message').classList.add('visible');
+
+      } catch (error) {
+        confirmPass.classList.add('input-error');
+        confirmPassError.textContent = 'Server error. Could not reset password.';
+        confirmPassError.classList.add('visible');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Reset Password';
+      }
+    });
+  </script>
+</body>
+</html>

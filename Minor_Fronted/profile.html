@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Visionary — Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--ink:#1a1612;--cream:#f5f0e8;--gold:#c9a84c;--muted:#8a7f72;--line:rgba(26,22,18,0.1);--card:#fffefb;--red:#c0392b}
+    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink)}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:rgba(245,240,232,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+    .logo{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;letter-spacing:.1em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--gold)}
+    .nav-right{display:flex;gap:1rem;align-items:center}
+    .nav-link{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;color:var(--muted);transition:color .2s}
+    .nav-link:hover{color:var(--ink)}
+    .nav-btn{padding:.45rem 1.2rem;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;font-family:'DM Sans',sans-serif;border:1px solid var(--muted);background:transparent;color:var(--muted);transition:all .2s}
+    .nav-btn:hover{border-color:var(--ink);color:var(--ink)}
+
+    .page{max-width:860px;margin:0 auto;padding:90px 1.5rem 3rem}
+
+    /* PROFILE HEADER */
+    .profile-header{display:flex;gap:2.5rem;align-items:flex-start;margin-bottom:2rem;padding-bottom:2rem;border-bottom:1px solid var(--line)}
+    .avatar-wrap{position:relative;flex-shrink:0}
+    .profile-avatar{width:100px;height:100px;border-radius:50%;object-fit:cover;border:2px solid var(--line)}
+    .avatar-edit-btn{position:absolute;bottom:0;right:0;width:28px;height:28px;border-radius:50%;background:var(--ink);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--cream);font-size:.7rem}
+    .profile-info{flex:1}
+    .profile-name{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:300;margin-bottom:.2rem}
+    .profile-bio{font-size:.9rem;color:var(--muted);margin-bottom:.5rem;line-height:1.5}
+    .profile-website a{font-size:.82rem;color:var(--gold);text-decoration:none}
+    .profile-stats{display:flex;gap:2rem;margin-top:.9rem}
+    .stat{cursor:pointer}
+    .stat-num{font-family:'Cormorant Garamond',serif;font-size:1.5rem;display:block;font-weight:400}
+    .stat-label{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+    .edit-btn{margin-top:.8rem;padding:.5rem 1.4rem;font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;border:1px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+    .edit-btn:hover{background:var(--ink);color:var(--cream)}
+
+    /* EDIT FORM */
+    .edit-form{background:var(--card);border:1px solid var(--line);padding:1.5rem;margin-bottom:1.5rem;display:none}
+    .edit-form.open{display:block}
+    .edit-form h3{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+    .form-group{display:flex;flex-direction:column;gap:.3rem}
+    .form-group label{font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+    .form-group input,.form-group textarea{border:1px solid var(--line);padding:.5rem .7rem;font-size:.88rem;font-family:'DM Sans',sans-serif;color:var(--ink);background:transparent;outline:none;resize:none}
+    .form-group input:focus,.form-group textarea:focus{border-color:var(--gold)}
+    .form-actions{display:flex;gap:.7rem;margin-top:1rem}
+    .save-btn{padding:.55rem 1.6rem;background:var(--ink);color:var(--cream);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;border:none;cursor:pointer;font-family:'DM Sans',sans-serif}
+    .cancel-btn{padding:.55rem 1.2rem;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--muted);background:transparent;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif}
+
+    /* TABS */
+    .tabs{display:flex;border-bottom:1px solid var(--line);margin-bottom:1.5rem}
+    .tab{padding:.7rem 1.5rem;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif}
+    .tab.active{color:var(--ink);border-bottom-color:var(--ink)}
+
+    /* GRID */
+    .post-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-bottom:1.5rem}
+    .grid-item{aspect-ratio:1;overflow:hidden;cursor:pointer;position:relative}
+    .grid-item img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+    .grid-item:hover img{transform:scale(1.05)}
+    .grid-item-overlay{position:absolute;inset:0;background:rgba(26,22,18,0);display:flex;align-items:center;justify-content:center;gap:1rem;color:#fff;font-size:.85rem;transition:background .3s;opacity:0}
+    .grid-item:hover .grid-item-overlay{background:rgba(26,22,18,0.45);opacity:1}
+
+    /* NEW POST BTN */
+    .new-post-bar{display:flex;justify-content:flex-end;margin-bottom:1rem}
+    .new-post-btn{padding:.55rem 1.4rem;background:var(--gold);color:var(--ink);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500}
+
+    /* MODAL (full post view) */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;display:none;place-items:center}
+    .modal-overlay.open{display:grid}
+    .modal{background:var(--card);display:flex;max-width:860px;width:95%;max-height:90vh}
+    .modal-img{flex:1;min-width:0}
+    .modal-img img{width:100%;height:100%;object-fit:cover;display:block}
+    .modal-side{width:300px;display:flex;flex-direction:column;border-left:1px solid var(--line)}
+    .modal-header{display:flex;align-items:center;gap:.7rem;padding:.9rem;border-bottom:1px solid var(--line)}
+    .modal-header img{width:36px;height:36px;border-radius:50%;object-fit:cover}
+    .modal-header strong{font-size:.9rem}
+    .modal-caption{padding:.8rem;font-size:.88rem;line-height:1.6;border-bottom:1px solid var(--line)}
+    .modal-comments{flex:1;overflow-y:auto;padding:.8rem}
+    .modal-comment{display:flex;gap:.5rem;margin-bottom:.6rem;font-size:.83rem}
+    .modal-comment img{width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0}
+    .modal-actions{padding:.7rem;border-top:1px solid var(--line);display:flex;gap:.5rem;align-items:center}
+    .modal-like-btn{background:none;border:none;cursor:pointer;font-size:1.1rem;padding:.2rem}
+    .modal-comment-input{flex:1;border:none;border-bottom:1px solid var(--line);background:transparent;font-size:.85rem;font-family:'DM Sans',sans-serif;padding:.3rem .2rem;outline:none}
+    .modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;z-index:600}
+    .modal-delete{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--red);font-size:.78rem;letter-spacing:.07em;text-transform:uppercase;font-family:'DM Sans',sans-serif}
+    .modal-edit-caption{background:none;border:none;cursor:pointer;color:var(--muted);font-size:.78rem;font-family:'DM Sans',sans-serif}
+
+    /* FOLLOWERS MODAL */
+    .fl-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:600;display:none;place-items:center}
+    .fl-modal-overlay.open{display:grid}
+    .fl-modal{background:var(--card);width:min(420px,95%);max-height:70vh;display:flex;flex-direction:column}
+    .fl-modal-header{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.2rem;border-bottom:1px solid var(--line)}
+    .fl-modal-title{font-size:.82rem;letter-spacing:.12em;text-transform:uppercase}
+    .fl-modal-close{background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--muted)}
+    .fl-list{overflow-y:auto;flex:1;padding:.8rem 1.2rem}
+    .fl-item{display:flex;align-items:center;gap:.8rem;padding:.5rem 0;border-bottom:1px solid var(--line)}
+    .fl-item img{width:40px;height:40px;border-radius:50%;object-fit:cover}
+    .fl-item-name{font-size:.9rem;font-weight:500}
+    .fl-item-bio{font-size:.75rem;color:var(--muted)}
+    .fl-item a{text-decoration:none;color:var(--ink)}
+
+    /* CREATE POST MODAL */
+    .cp-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:600;display:none;place-items:center}
+    .cp-overlay.open{display:grid}
+    .cp-modal{background:var(--card);width:min(480px,95%);padding:1.8rem}
+    .cp-modal h3{font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:1.2rem}
+    .cp-modal .form-group{margin-bottom:.9rem}
+    .cp-file-label{display:flex;align-items:center;gap:.5rem;cursor:pointer;border:1px dashed var(--line);padding:.6rem .9rem;font-size:.85rem;color:var(--muted);transition:all .2s}
+    .cp-file-label:hover{border-color:var(--gold);color:var(--gold)}
+    .cp-preview{max-height:220px;object-fit:cover;width:100%;margin-top:.6rem;display:none}
+    .cp-preview.show{display:block}
+    .cp-actions{display:flex;gap:.7rem;justify-content:flex-end;margin-top:1rem}
+
+    .loader{text-align:center;padding:2rem;color:var(--muted);font-size:.85rem}
+    .spinner{display:inline-block;width:22px;height:22px;border:2px solid var(--line);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:.5rem}
+    .toast{position:fixed;bottom:2rem;right:2rem;background:var(--ink);color:var(--cream);padding:.7rem 1.3rem;font-size:.83rem;z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none}
+    .toast.show{opacity:1;transform:translateY(0)}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @media(max-width:600px){.profile-header{flex-direction:column;gap:1.2rem}.form-grid{grid-template-columns:1fr}.modal{flex-direction:column}.modal-side{width:100%;border-left:none;border-top:1px solid var(--line)}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">vis<span>ons</span></a>
+  <div class="nav-right">
+    <a href="./dashboard.html" class="nav-link">Feed</a>
+    <button class="nav-btn" id="logoutBtn">Logout</button>
+  </div>
+</nav>
+
+<div class="page">
+  <!-- PROFILE HEADER -->
+  <div class="profile-header" id="profileHeader">
+    <div class="loader"><span class="spinner"></span></div>
+  </div>
+
+  <!-- EDIT FORM -->
+  <div class="edit-form" id="editForm">
+    <h3>Edit Profile</h3>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" id="editName" placeholder="Your name"/>
+      </div>
+      <div class="form-group">
+        <label>Website</label>
+        <input type="text" id="editWebsite" placeholder="https://…"/>
+      </div>
+      <div class="form-group" style="grid-column:1/-1">
+        <label>Bio</label>
+        <textarea id="editBio" rows="2" placeholder="Tell your story…"></textarea>
+      </div>
+      <div class="form-group" style="grid-column:1/-1">
+        <label>Avatar</label>
+        <label class="cp-file-label">
+          <span>📷 Change Avatar</span>
+          <input type="file" id="editAvatarFile" accept="image/*" style="display:none"/>
+        </label>
+        <img id="editAvatarPreview" class="cp-preview"/>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="save-btn" id="saveProfileBtn">Save</button>
+      <button class="cancel-btn" id="cancelEditBtn">Cancel</button>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" data-tab="posts">Posts</button>
+    <button class="tab" data-tab="liked">Liked</button>
+  </div>
+
+  <div class="new-post-bar">
+    <button class="new-post-btn" id="openCreatePost">+ New Post</button>
+  </div>
+
+  <!-- POSTS GRID -->
+  <div class="post-grid" id="postGrid"></div>
+  <div class="loader" id="postsLoader" style="display:none"><span class="spinner"></span></div>
+  <div id="noMorePosts" style="text-align:center;font-size:.82rem;color:var(--muted);padding:1rem;display:none">— No more posts —</div>
+</div>
+
+<!-- POST VIEW MODAL -->
+<div class="modal-overlay" id="postModal">
+  <button class="modal-close" id="modalClose">✕</button>
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<!-- FOLLOWERS/FOLLOWING MODAL -->
+<div class="fl-modal-overlay" id="flModal">
+  <div class="fl-modal">
+    <div class="fl-modal-header">
+      <span class="fl-modal-title" id="flModalTitle">Followers</span>
+      <button class="fl-modal-close" id="flModalClose">✕</button>
+    </div>
+    <div class="fl-list" id="flList"></div>
+  </div>
+</div>
+
+<!-- CREATE POST MODAL -->
+<div class="cp-overlay" id="cpOverlay">
+  <div class="cp-modal">
+    <h3>New Post</h3>
+    <div class="form-group">
+      <label class="cp-file-label">
+        <span>📷 Select Image</span>
+        <input type="file" id="cpImage" accept="image/*" style="display:none"/>
+      </label>
+      <img class="cp-preview" id="cpPreview"/>
+    </div>
+    <div class="form-group">
+      <label style="font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Caption</label>
+      <textarea class="form-group textarea" id="cpCaption" rows="3" style="border:1px solid var(--line);padding:.5rem .7rem;font-size:.88rem;font-family:'DM Sans',sans-serif;background:transparent;outline:none;width:100%;resize:none;color:var(--ink)" placeholder="Write a caption…"></textarea>
+    </div>
+    <div class="cp-actions">
+      <button class="cancel-btn" id="cpCancel">Cancel</button>
+      <button class="save-btn" id="cpSubmit">Post</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const BASE = '/api';
+let currentUser = null;
+let postsPage = 1;
+let postsLoading = false;
+let postsHasMore = true;
+let currentPostId = null;
+
+function showToast(msg, dur=2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), dur);
+}
+
+function avatarUrl(user) {
+  return user?.avatar?.url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name||'U')}&background=c9a84c&color=fff`;
+}
+
+function timeAgo(d) {
+  const s = Math.floor((Date.now()-new Date(d))/1000);
+  if(s<60) return 'just now';
+  if(s<3600) return Math.floor(s/60)+'m ago';
+  if(s<86400) return Math.floor(s/3600)+'h ago';
+  return Math.floor(s/86400)+'d ago';
+}
+
+// ── LOAD PROFILE ────────────────────────────────────────────────
+async function loadProfile() {
+  const r = await fetch(`${BASE}/users/me`, { credentials:'include' });
+  if (!r.ok) { window.location.href='./sign-in.html'; return; }
+  currentUser = await r.json();
+  renderHeader();
+  document.getElementById('editName').value = currentUser.name || '';
+  document.getElementById('editBio').value = currentUser.bio || '';
+  document.getElementById('editWebsite').value = currentUser.website || '';
+}
+
+function renderHeader() {
+  document.getElementById('profileHeader').innerHTML = `
+    <div class="avatar-wrap">
+      <img src="${avatarUrl(currentUser)}" class="profile-avatar" id="profileAvatarImg"/>
+      <button class="avatar-edit-btn" id="avatarEditTrigger" title="Change avatar">✎</button>
+    </div>
+    <div class="profile-info">
+      <div class="profile-name">${currentUser.name}</div>
+      <div class="profile-bio">${currentUser.bio || '<span style="color:var(--muted);font-style:italic">No bio yet</span>'}</div>
+      ${currentUser.website ? `<div class="profile-website"><a href="${currentUser.website}" target="_blank">${currentUser.website}</a></div>` : ''}
+      <div class="profile-stats">
+        <div class="stat" id="statPosts"><span class="stat-num" id="postCount">—</span><span class="stat-label">Posts</span></div>
+        <div class="stat" id="statFollowers" style="cursor:pointer"><span class="stat-num">${currentUser.followers?.length||0}</span><span class="stat-label">Followers</span></div>
+        <div class="stat" id="statFollowing" style="cursor:pointer"><span class="stat-num">${currentUser.following?.length||0}</span><span class="stat-label">Following</span></div>
+      </div>
+      <button class="edit-btn" id="editProfileBtn">Edit Profile</button>
+    </div>
+  `;
+
+  document.getElementById('editProfileBtn').addEventListener('click', () => {
+    document.getElementById('editForm').classList.toggle('open');
+  });
+  document.getElementById('avatarEditTrigger').addEventListener('click', () => {
+    document.getElementById('editForm').classList.add('open');
+    document.getElementById('editAvatarFile').click();
+  });
+  document.getElementById('statFollowers').addEventListener('click', () => openFlModal('followers'));
+  document.getElementById('statFollowing').addEventListener('click', () => openFlModal('following'));
+}
+
+// ── FOLLOWERS MODAL ─────────────────────────────────────────────
+function openFlModal(type) {
+  const list = type === 'followers' ? currentUser.followers : currentUser.following;
+  document.getElementById('flModalTitle').textContent = type === 'followers' ? 'Followers' : 'Following';
+  const fl = document.getElementById('flList');
+  fl.innerHTML = !list?.length ? '<p style="font-size:.85rem;color:var(--muted)">None yet</p>' :
+    list.map(u => `
+      <div class="fl-item">
+        <img src="${avatarUrl(u)}"/>
+        <div>
+          <a href="/user-profile?id=${u._id}" class="fl-item-name">${u.name}</a>
+          <div class="fl-item-bio">${u.bio||''}</div>
+        </div>
+      </div>
+    `).join('');
+  document.getElementById('flModal').classList.add('open');
+}
+
+document.getElementById('flModalClose').addEventListener('click', () => document.getElementById('flModal').classList.remove('open'));
+document.getElementById('flModal').addEventListener('click', e => { if(e.target === e.currentTarget) e.currentTarget.classList.remove('open'); });
+
+// ── LOAD POSTS ──────────────────────────────────────────────────
+async function loadPosts() {
+  if (postsLoading || !postsHasMore) return;
+  postsLoading = true;
+  document.getElementById('postsLoader').style.display = 'block';
+  const r = await fetch(`${BASE}/posts/user/${currentUser._id}?page=${postsPage}&limit=9`, { credentials:'include' });
+  if (r.ok) {
+    const data = await r.json();
+    data.posts.forEach(addPostToGrid);
+    if (postsPage === 1) document.getElementById('postCount').textContent = data.posts.length + (data.hasMore ? '+' : '');
+    postsHasMore = data.hasMore;
+    postsPage++;
+    if (!postsHasMore) { document.getElementById('noMorePosts').style.display='block'; }
+  }
+  document.getElementById('postsLoader').style.display = 'none';
+  postsLoading = false;
+}
+
+function addPostToGrid(post) {
+  const grid = document.getElementById('postGrid');
+  const div = document.createElement('div');
+  div.className = 'grid-item';
+  div.dataset.postId = post._id;
+  div.innerHTML = `
+    <img src="${post.image.url}" alt="" loading="lazy"/>
+    <div class="grid-item-overlay">
+      ♥ ${post.likes?.length||0} &nbsp; 💬 ${post.comments?.length||0}
+    </div>
+  `;
+  div.addEventListener('click', () => openPostModal(post._id));
+  grid.appendChild(div);
+}
+
+// ── POST MODAL ──────────────────────────────────────────────────
+async function openPostModal(postId) {
+  currentPostId = postId;
+  const r = await fetch(`${BASE}/posts/${postId}`);
+  if (!r.ok) return;
+  const post = await r.json();
+  const isOwner = post.author._id === currentUser._id;
+  const liked = post.likes.some(id => (id._id||id) === currentUser._id);
+
+  document.getElementById('modalContent').innerHTML = `
+    <div class="modal-img"><img src="${post.image.url}" alt=""/></div>
+    <div class="modal-side">
+      <div class="modal-header">
+        <img src="${avatarUrl(post.author)}" alt=""/>
+        <strong>${post.author.name}</strong>
+        <span style="margin-left:auto;font-size:.72rem;color:var(--muted)">${timeAgo(post.createdAt)}</span>
+      </div>
+      ${post.caption ? `<div class="modal-caption"><strong>${post.author.name}</strong> ${post.caption}</div>` : ''}
+      <div class="modal-comments" id="mComments">
+        ${post.comments.map(c => `
+          <div class="modal-comment">
+            <img src="${avatarUrl(c.user)}" alt=""/>
+            <div><strong>${c.user.name}</strong> ${c.text}</div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="modal-actions">
+        <button class="modal-like-btn" id="mLikeBtn" title="Like">${liked ? '❤️' : '🤍'}</button>
+        <span id="mLikeCount" style="font-size:.82rem;color:var(--muted)">${post.likes.length}</span>
+        ${isOwner ? `<button class="modal-edit-caption" id="mEditCaption">Edit</button><button class="modal-delete" id="mDeleteBtn">Delete</button>` : ''}
+      </div>
+      <div style="display:flex;gap:.5rem;padding:.5rem .7rem;border-top:1px solid var(--line)">
+        <input class="modal-comment-input" id="mCommentInput" placeholder="Add a comment…"/>
+        <button class="comment-submit" style="background:none;border:none;color:var(--gold);cursor:pointer;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;font-family:'DM Sans',sans-serif;font-weight:500" id="mCommentSubmit">Post</button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('postModal').classList.add('open');
+
+  document.getElementById('mLikeBtn').addEventListener('click', async () => {
+    const r2 = await fetch(`${BASE}/posts/${postId}/like`, { method:'POST', credentials:'include' });
+    if (r2.ok) {
+      const d = await r2.json();
+      document.getElementById('mLikeBtn').textContent = d.liked ? '❤️' : '🤍';
+      document.getElementById('mLikeCount').textContent = d.likeCount;
+    }
+  });
+
+  document.getElementById('mCommentSubmit').addEventListener('click', async () => {
+    const input = document.getElementById('mCommentInput');
+    const text = input.value.trim();
+    if (!text) return;
+    const r2 = await fetch(`${BASE}/posts/${postId}/comment`, {
+      method:'POST', credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ text })
+    });
+    if (r2.ok) {
+      const d = await r2.json();
+      const div = document.createElement('div');
+      div.className = 'modal-comment';
+      div.innerHTML = `<img src="${avatarUrl(currentUser)}" alt=""/><div><strong>${currentUser.name}</strong> ${text}</div>`;
+      document.getElementById('mComments').appendChild(div);
+      input.value = '';
+    }
+  });
+
+  if (isOwner) {
+    document.getElementById('mDeleteBtn').addEventListener('click', async () => {
+      if (!confirm('Delete this post?')) return;
+      const r2 = await fetch(`${BASE}/posts/${postId}`, { method:'DELETE', credentials:'include' });
+      if (r2.ok) {
+        showToast('Post deleted');
+        document.getElementById('postModal').classList.remove('open');
+        const el = document.querySelector(`[data-post-id="${postId}"]`);
+        if (el) el.remove();
+      }
+    });
+
+    document.getElementById('mEditCaption').addEventListener('click', async () => {
+      const newCap = prompt('Edit caption:', post.caption || '');
+      if (newCap === null) return;
+      const r2 = await fetch(`${BASE}/posts/${postId}`, {
+        method:'PATCH', credentials:'include',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ caption: newCap })
+      });
+      if (r2.ok) showToast('Caption updated');
+    });
+  }
+}
+
+document.getElementById('modalClose').addEventListener('click', () => document.getElementById('postModal').classList.remove('open'));
+document.getElementById('postModal').addEventListener('click', e => { if(e.target===e.currentTarget) e.currentTarget.classList.remove('open'); });
+
+// ── EDIT PROFILE ────────────────────────────────────────────────
+document.getElementById('editAvatarFile').addEventListener('change', e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const reader = new FileReader();
+  reader.onload = ev => { const p = document.getElementById('editAvatarPreview'); p.src=ev.target.result; p.classList.add('show'); };
+  reader.readAsDataURL(f);
+});
+
+document.getElementById('saveProfileBtn').addEventListener('click', async () => {
+  const fd = new FormData();
+  fd.append('name', document.getElementById('editName').value);
+  fd.append('bio', document.getElementById('editBio').value);
+  fd.append('website', document.getElementById('editWebsite').value);
+  const avatarFile = document.getElementById('editAvatarFile').files[0];
+  if (avatarFile) fd.append('avatar', avatarFile);
+
+  const btn = document.getElementById('saveProfileBtn');
+  btn.textContent = 'Saving…';
+  const r = await fetch(`${BASE}/users/update-profile`, { method:'PATCH', credentials:'include', body:fd });
+  if (r.ok) {
+    const d = await r.json();
+    currentUser = { ...currentUser, ...d.user };
+    renderHeader();
+    document.getElementById('editForm').classList.remove('open');
+    showToast('Profile updated!');
+  } else {
+    showToast('Update failed');
+  }
+  btn.textContent = 'Save';
+});
+
+document.getElementById('cancelEditBtn').addEventListener('click', () => document.getElementById('editForm').classList.remove('open'));
+
+// ── CREATE POST ─────────────────────────────────────────────────
+document.getElementById('openCreatePost').addEventListener('click', () => document.getElementById('cpOverlay').classList.add('open'));
+document.getElementById('cpCancel').addEventListener('click', () => document.getElementById('cpOverlay').classList.remove('open'));
+document.getElementById('cpOverlay').addEventListener('click', e => { if(e.target===e.currentTarget) e.currentTarget.classList.remove('open'); });
+
+document.getElementById('cpImage').addEventListener('change', e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const reader = new FileReader();
+  reader.onload = ev => { const p=document.getElementById('cpPreview'); p.src=ev.target.result; p.classList.add('show'); };
+  reader.readAsDataURL(f);
+});
+
+document.getElementById('cpSubmit').addEventListener('click', async () => {
+  const img = document.getElementById('cpImage').files[0];
+  if (!img) { showToast('Select an image first'); return; }
+  const caption = document.getElementById('cpCaption').value;
+  const fd = new FormData();
+  fd.append('image', img);
+  fd.append('caption', caption);
+
+  const btn = document.getElementById('cpSubmit');
+  btn.textContent = 'Posting…'; btn.disabled = true;
+  const r = await fetch(`${BASE}/posts/create`, { method:'POST', credentials:'include', body:fd });
+  if (r.ok) {
+    const d = await r.json();
+    addPostToGrid(d.post);
+    document.getElementById('cpOverlay').classList.remove('open');
+    document.getElementById('cpImage').value = '';
+    document.getElementById('cpCaption').value = '';
+    document.getElementById('cpPreview').classList.remove('show');
+    showToast('Post shared!');
+  } else showToast('Error posting');
+  btn.textContent = 'Post'; btn.disabled = false;
+});
+
+// ── TABS ────────────────────────────────────────────────────────
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+  });
+});
+
+// ── SCROLL LOAD ─────────────────────────────────────────────────
+const scrollObs = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting) loadPosts();
+}, { threshold:0.1 });
+scrollObs.observe(document.getElementById('noMorePosts'));
+
+// ── LOGOUT ──────────────────────────────────────────────────────
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await fetch(`${BASE}/users/logout`, { method:'POST', credentials:'include' });
+  window.location.href = './index.html';
+});
+
+// ── INIT ────────────────────────────────────────────────────────
+loadProfile().then(() => loadPosts());
+</script>
+</body>
+</html>

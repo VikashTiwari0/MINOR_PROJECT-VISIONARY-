@@ -1,0 +1,219 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify OTP</title>
+  <style>
+    :root {
+      --ink: #1a1612;
+      --cream: #f5f0e8;
+      --gold: #c9a84c;
+      --muted: #8a7f72;
+      --line: rgba(26, 22, 18, 0.12);
+      --error: #d93838;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--cream);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .card {
+      background-color: #fff;
+      padding: 2.5rem;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 8px 32px rgba(26, 22, 18, 0.04);
+    }
+
+    h2 { margin-bottom: 0.5rem; text-align: center; }
+    p.subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 2rem; text-align: center; }
+    
+    .form-group { margin-bottom: 1.5rem; }
+    
+    /* Modern Split OTP Input Container */
+    .otp-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .otp-input {
+      width: 3rem;
+      height: 3.5rem;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--ink);
+      background-color: var(--cream);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .otp-input:focus {
+      outline: none;
+      border-color: var(--gold);
+      background-color: #fff;
+      box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.15);
+      transform: translateY(-2px);
+    }
+    
+    /* Error Styles */
+    .otp-container.has-error .otp-input {
+      border-color: var(--error);
+      background-color: rgba(217, 56, 56, 0.03);
+    }
+
+    .error-msg { 
+      color: var(--error); 
+      font-size: 0.85rem; 
+      margin-top: 0.75rem; 
+      text-align: center;
+      display: none; 
+    }
+    .error-msg.visible { display: block; }
+
+    button {
+      width: 100%;
+      padding: 0.875rem;
+      background-color: var(--ink);
+      color: var(--cream);
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+    button:hover { background-color: var(--gold); color: var(--ink); }
+    button:active { transform: scale(0.98); }
+    button:disabled { background-color: var(--muted); cursor: not-allowed; transform: none; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>Enter Security Code</h2>
+    <p class="subtitle">We sent a 6-digit code to your email.</p>
+    
+    <div class="form-group">
+      <div class="otp-container" id="otp-container">
+        <input type="password" class="otp-input" maxlength="1" autofocus>
+        <input type="password" class="otp-input" maxlength="1">
+        <input type="password" class="otp-input" maxlength="1">
+        <input type="password" class="otp-input" maxlength="1">
+        <input type="password" class="otp-input" maxlength="1">
+        <input type="password" class="otp-input" maxlength="1">
+      </div>
+      <div id="otp-error" class="error-msg">Invalid OTP. Please try again.</div>
+    </div>
+    
+    <button id="btn-verify">Verify Code</button>
+  </div>
+
+  <script>
+    const inputs = document.querySelectorAll('.otp-input');
+    const container = document.getElementById('otp-container');
+    const errorDiv = document.getElementById('otp-error');
+    const btnVerify = document.getElementById('btn-verify');
+
+    // --- OTP Input Logic ---
+    inputs.forEach((input, index) => {
+      
+      // Handle Typing (Auto-advance)
+      input.addEventListener('input', (e) => {
+        // If a number was typed and there is a next input, focus it
+        if (e.target.value !== '' && index < inputs.length - 1) {
+          inputs[index + 1].focus();
+        }
+      });
+
+      // Handle Backspace (Auto-retreat)
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && e.target.value === '' && index > 0) {
+          inputs[index - 1].focus();
+        }
+      });
+
+      // Handle Pasting a full code
+      input.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const pastedData = e.clipboardData.getData('text').trim().slice(0, inputs.length);
+        
+        // Only allow numbers (optional validation, adjust if OTP contains letters)
+        if (!/^\d+$/.test(pastedData)) return; 
+
+        pastedData.split('').forEach((char, i) => {
+          if (inputs[i]) {
+            inputs[i].value = char;
+            if (i === pastedData.length - 1 || i === inputs.length - 1) {
+              inputs[i].focus();
+            }
+          }
+        });
+      });
+    });
+
+    // --- Verification Logic ---
+    btnVerify.addEventListener('click', async (e) => {
+      // Gather the code from all 6 boxes
+      let otpCode = '';
+      inputs.forEach(input => otpCode += input.value);
+
+      // Reset error state
+      container.classList.remove('has-error');
+      errorDiv.classList.remove('visible');
+
+      if (otpCode.length < 6) {
+        container.classList.add('has-error');
+        errorDiv.textContent = 'Please fill in all 6 digits.';
+        errorDiv.classList.add('visible');
+        return;
+      }
+
+      btnVerify.disabled = true;
+      btnVerify.textContent = 'Verifying...';
+
+      try {
+        // --- YOUR FETCH API CALL HERE ---
+        // const response = await fetch('/api/verify-otp', {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json' },
+        //   body: JSON.stringify({ otp: otpCode })
+        // });
+        // if (!response.ok) throw new Error('Invalid OTP');
+
+        // Mock delay
+        await new Promise(r => setTimeout(r, 1000));
+        
+        // Success -> Redirect
+        window.location.href = 'reset.html';
+
+      } catch (error) {
+        container.classList.add('has-error');
+        errorDiv.textContent = 'Incorrect code. Please try again.';
+        errorDiv.classList.add('visible');
+        
+        // Clear inputs on error
+        inputs.forEach(input => input.value = '');
+        inputs[0].focus();
+      } finally {
+        btnVerify.disabled = false;
+        btnVerify.textContent = 'Verify Code';
+      }
+    });
+  </script>
+</body>
+</html>
