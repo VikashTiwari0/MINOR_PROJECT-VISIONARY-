@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const monngoDB=mongoose.connect(`${process.env.MONGODB_URI}/${process.env.DB_NAME}`).then(() => {
+const monngoDB=mongoose.connect(`${process.env.MONGODB_URI}`).then(() => {
   console.log('Connected to MongoDB');
 }).catch((err) => {
   console.error('Error connecting to MongoDB:', err);
