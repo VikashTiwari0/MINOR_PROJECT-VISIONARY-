@@ -568,6 +568,7 @@
 <script>
   const password = document.getElementById("password");
   const email = document.getElementById("email");
+  const base="http://localhost:3000/api";
 
   async function Submit(e) {
     e.preventDefault();
@@ -578,7 +579,7 @@
     btn.disabled = true;
 
     try {
-      const res = await fetch("/api/users/login", {
+      const res = await fetch(`${base}/users/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

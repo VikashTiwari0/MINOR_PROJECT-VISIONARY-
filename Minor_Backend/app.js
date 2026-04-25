@@ -3,10 +3,16 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import userController from './controllers/user_controller.js';
 import postController from './controllers/post_controller.js';
+import cors from "cors";
+
 
 const app = express();
 const __dirname = path.resolve();
 
+app.use(cors({
+  origin: "http://localhost:5500", // your frontend URL
+  credentials: true
+}));
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

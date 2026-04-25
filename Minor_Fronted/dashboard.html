@@ -206,8 +206,8 @@ function avatarUrl(user) {
 async function tryRefreshToken() {
   try {
     const res = await fetch(`${BASE}/refresh-token`, {
-      method: 'POST',              // ✅ matches backend
-      credentials: 'include'       // 🔑 send cookies
+      method: 'POST',              //  matches backend
+      credentials: 'include'       //  send cookies
     });
 
     return res.ok; // true = refreshed, false = expired

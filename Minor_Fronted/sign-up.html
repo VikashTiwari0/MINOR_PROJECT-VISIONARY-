@@ -489,7 +489,7 @@
     </div>
 
 
-    <form class="signup-form-wrap" action="/api/users/register" method="POST" enctype="multipart/form-data">
+    <form class="signup-form-wrap" action="/http://localhost:300000/api/users/register" method="POST" enctype="multipart/form-data">
 
       <p class="form-title">Create your account</p>
       <p class="form-subtitle">Already have one? <a href="/sign-in">Sign in</a></p>
@@ -550,6 +550,7 @@
   <script>
     const form = document.querySelector("form");
     const btn = document.querySelector(".btn-submit");
+    const base = "http://localhost:3000/api";
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -583,7 +584,7 @@
       formData.delete("lname");
 
       try {
-        const res = await fetch("/api/users/register", {
+        const res = await fetch(`${base}/users/register`, {
           method: "POST",
           body: formData //  no headers!
         });
