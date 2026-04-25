@@ -489,10 +489,10 @@
     </div>
 
 
-    <form class="signup-form-wrap" action="/http://localhost:300000/api/users/register" method="POST" enctype="multipart/form-data">
+    <form class="signup-form-wrap" action="https://minor-project-visionary-1.onrender.com/api/users/register" method="POST" enctype="multipart/form-data">
 
       <p class="form-title">Create your account</p>
-      <p class="form-subtitle">Already have one? <a href="/sign-in">Sign in</a></p>
+      <p class="form-subtitle">Already have one? <a href="./sign-in.html">Sign in</a></p>
 
       <div class="form-row">
         <div class="form-group">
@@ -550,7 +550,7 @@
   <script>
     const form = document.querySelector("form");
     const btn = document.querySelector(".btn-submit");
-    const base = "http://localhost:3000/api";
+    const base = "https://minor-project-visionary-1.onrender.com/api";
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
