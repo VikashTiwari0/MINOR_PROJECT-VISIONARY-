@@ -20,14 +20,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/users", userController);
 app.use("/api/posts", postController);
 
-// const pages = ["", "about", "contact", "sign-up", "sign-in", "dashboard", "profile", "user-profile"];
-// pages.forEach(p => {
-//   const route = p === "" ? "/" : `/${p}`;
-//   const file = p === "" ? "index" : p;
-//   app.get(route, (req, res) => {
-//     res.sendFile(path.join(__dirname, 'public', `${file}.html`));
-//   });
-// });
+const pages = ["", "about", "contact", "sign-up", "sign-in", "dashboard", "profile", "user-profile"];
+pages.forEach(p => {
+  const route = p === "" ? "/" : `/${p}`;
+  const file = p === "" ? "index" : p;
+  app.get(route, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', `${file}.html`));
+  });
+});
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
