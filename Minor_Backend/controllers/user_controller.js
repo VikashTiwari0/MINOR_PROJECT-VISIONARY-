@@ -64,13 +64,13 @@ router.post("/register", upload.single('avatar'), async (req, res) => {
         res.cookie("accessToken", A_token, {
             httpOnly: true,
             secure: true,
-            sameSite: "Strict"
+            sameSite: "None"
         });
 
         res.cookie("refreshToken", R_token, {
             httpOnly: true,
             secure: true,
-            sameSite: "Strict"
+            sameSite: "None"
         });
 
         res.status(201).json({ message: "User registered successfully" });
@@ -90,8 +90,8 @@ router.post("/login", async (req, res) => {
     }
     
     const { A_token, R_token } = await generateAccessandRefreshToken(user._id);
-    res.cookie("accessToken", A_token, { httpOnly: true, secure: true, sameSite: 'Strict' });
-    res.cookie("refreshToken", R_token, { httpOnly: true, secure: true, sameSite: 'Strict' });
+    res.cookie("accessToken", A_token, { httpOnly: true, secure: true, sameSite: 'None' });
+    res.cookie("refreshToken", R_token, { httpOnly: true, secure: true, sameSite: 'None' });
     res.json({ message: "Login successful" });
     
 });
@@ -104,8 +104,8 @@ router.post("/logout", authMiddleware, async (req, res) => {
             validateBeforeSave: false
             
         });
-        res.clearCookie("accessToken");
-        res.clearCookie("refreshToken");
+        res.clearCookie("accessToken", { httpOnly: true, secure: true, sameSite: 'None' });
+        res.clearCookie("refreshToken", { httpOnly: true, secure: true, sameSite: 'None' });
         res.status(200).json({ message: "Logout successful" });
     } catch (error) {
         console.error("Logout error:", error);
@@ -125,8 +125,8 @@ router.post("/refresh-token", async (req, res) => {
             return res.status(401).json({ message: "Invalid refresh token" });
         }
         const { A_token, R_token } = await generateAccessandRefreshToken(user._id);
-        res.cookie("accessToken", A_token, { httpOnly: true, secure: true, sameSite: 'Strict' });
-        res.cookie("refreshToken", R_token, { httpOnly: true, secure: true, sameSite: 'Strict' });
+        res.cookie("accessToken", A_token, { httpOnly: true, secure: true, sameSite: 'None' });
+        res.cookie("refreshToken", R_token, { httpOnly: true, secure: true, sameSite: 'None' });
         res.json({ message: "Token refreshed successfully" });
     } catch (error) {
         console.error("Refresh token error:", error);
