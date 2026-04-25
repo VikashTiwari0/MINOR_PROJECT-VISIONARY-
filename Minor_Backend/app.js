@@ -10,7 +10,7 @@ const app = express();
 const __dirname = path.resolve();
 
 app.use(cors({
-  origin: "http://localhost:5500", // your frontend URL
+  origin: "https://visionarys.netlify.app", // your frontend URL
   credentials: true
 }));
 app.use(cookieParser());
